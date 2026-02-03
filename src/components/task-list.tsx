@@ -1,12 +1,15 @@
 'use client'
 
+import { useMutation } from 'convex/react'
+import { api } from '../../convex/_generated/api'
+import { Id } from '../../convex/_generated/dataModel'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Trash2 } from 'lucide-react'
 
 type Task = {
-  _id: string
+  _id: Id<'tasks'>
   title: string
   description?: string
   isCompleted: boolean
@@ -17,12 +20,15 @@ type TaskListProps = {
 }
 
 export function TaskList({ tasks }: TaskListProps) {
-  const handleToggle = (taskId: string) => {
-    console.log('Toggle task:', taskId)
+  const toggleComplete = useMutation(api.tasks.toggleComplete)
+  const deleteTask = useMutation(api.tasks.deleteTask)
+
+  const handleToggle = (taskId: Id<'tasks'>) => {
+    toggleComplete({ id: taskId })
   }
 
-  const handleDelete = (taskId: string) => {
-    console.log('Delete task:', taskId)
+  const handleDelete = (taskId: Id<'tasks'>) => {
+    deleteTask({ id: taskId })
   }
 
   if (tasks.length === 0) {
