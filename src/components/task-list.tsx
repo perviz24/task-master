@@ -72,6 +72,7 @@ export function TaskList({ tasks }: TaskListProps) {
               size="icon"
               onClick={() => handleDelete(task._id)}
               className="text-muted-foreground hover:text-destructive"
+              aria-label={`Delete task: ${task.title}`}
             >
               <Trash2 className="h-4 w-4" />
             </Button>
