@@ -1,6 +1,8 @@
 'use client'
 
 import { useState } from 'react'
+import { useMutation } from 'convex/react'
+import { api } from '../../convex/_generated/api'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -9,12 +11,22 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 export function TaskForm() {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const addTask = useMutation(api.tasks.addTask)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log('Task submitted:', { title, description })
-    setTitle('')
-    setDescription('')
+    setIsSubmitting(true)
+    try {
+      await addTask({
+        title,
+        description: description || undefined,
+      })
+      setTitle('')
+      setDescription('')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -40,8 +52,8 @@ export function TaskForm() {
               rows={3}
             />
           </div>
-          <Button type="submit" className="w-full">
-            Add Task
+          <Button type="submit" className="w-full" disabled={isSubmitting}>
+            {isSubmitting ? 'Adding...' : 'Add Task'}
           </Button>
         </form>
       </CardContent>
